@@ -5,13 +5,18 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Wembz/propanalytix/backend/clients"
-	"github.com/mehanizm/airtable"
+	
+	"github.com/Wembz/propanalytix/backend/clients/email"
+	"github.com/Wembz/propanalytix/backend/clients/airtable"
 	"github.com/Wembz/propanalytix/backend/clients/stripe"
+	mehaAirtable "github.com/mehanizm/airtable" 
+
 	"github.com/Wembz/propanalytix/backend/config"
 	"github.com/Wembz/propanalytix/backend/models"
 	"github.com/Wembz/propanalytix/backend/routes"
 	"github.com/Wembz/propanalytix/backend/utils"
+
+
     "gopkg.in/gomail.v2"
 	"github.com/joho/godotenv"
 )
@@ -20,7 +25,7 @@ func main () {
 
 	var (
 		emailClient *gomail.Dialer
-		airtableClient *airtable.Client 
+		airtableClient *mehaAirtable.Client 
 	)
 
 	//Utils logger
@@ -52,12 +57,12 @@ func main () {
 
 	// 🔐 Initialize external services
 	stripe.InitStripe()
-	emailClient = clients.NewEmailClient()
-	airtableClient = clients.NewAirtableClient()
+	emailClient = email.NewEmailClient()
+	airtableClient = airtable.NewAirtableClient()
 
 	// Set up router
-	router := routes.SetupRouter(emailClient, airtableClient)
-	router.Run("8080")
+	router := routes.SetupRouter(airtableClient, emailClient)
+	router.Run(":8080")
 
 
 
